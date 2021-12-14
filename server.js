@@ -8,40 +8,53 @@ const io = require("socket.io")(http, {
     }
 });
 
-var players = 0;
-var currentRoom = 1;
+// var currentRoom = 1;
 
 io.on('connection', (socket) => {
-    players++;
-    console.log('Players in current room: ' + players);
 
-    console.log('a user connected');
+    var room = '';
 
-    socket.join('room' + currentRoom);
-    let room = 'room' + currentRoom;
+    socket.on('roomConfig', (infos) => {
+        socket.nickname = infos[0];
+        const clients = io.sockets.adapter.rooms.get(infos[1]);
+        let players = clients ? clients.size : 0;
+        console.log('Players in current room: ' + players);
 
-    if (players === 1) {
-        // console.log("Change Player in " + room);
-        // socket.to(room).emit('changePlayer');
-    } else if (players === 2) {
-        socket.to(room).emit('changePlayer');
-        players = 0;
-        currentRoom++;
-        console.log("New Room: " + 'room' + currentRoom);
-    }
+        if (clients && clients.size >= 2) {
+            console.log('Room is full');
+            io.to(socket.id).emit('roomFull');
+            return;
+        } else {
+            room = infos[1];
+            socket.join(room);
+            console.log('Player joined room: ' + room);
+            io.in(room).emit('resetPlayer');
+            io.to(socket.id).emit('roomJoined', room);
+        }
 
-    socket.on('position', (position) => {
-        socket.to(room).emit('position-broadcast', position);
-    });
-    socket.on('changePlayer', () => {
-        io.in(room).emit('changePlayer');
-    });
-    socket.on('newGame', () => {
-        io.in(room).emit('newGame');
-    });
-    socket.on('disconnect', () => {
-        // players--;
-        console.log('user disconnected');
+        if (players === 0) {
+            // console.log("Change Player in " + room);
+            // socket.to(room).emit('changePlayer');
+        } else if (players === 1) {
+            socket.to(room).emit('changePlayer');
+            // currentRoom++;
+            // console.log("New Room: " + 'room' + currentRoom);
+        }
+
+        socket.on('position', (position) => {
+            socket.to(room).emit('position-broadcast', position);
+        });
+        socket.on('changePlayer', () => {
+            io.in(room).emit('changePlayer');
+        });
+        socket.on('newGame', () => {
+            io.in(room).emit('newGame');
+        });
+        socket.on('disconnect', () => {
+            // players--;
+            console.log('user disconnected');
+        });
+
     });
 });
 
