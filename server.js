@@ -34,7 +34,7 @@ io.on('connection', (socket) => {
         socket.to(room).emit('position-broadcast', position);
     });
     socket.on('changePlayer', () => {
-        socket.to(room).emit('changePlayer');
+        io.in(room).emit('changePlayer');
     });
     socket.on('newGame', () => {
         io.in(room).emit('newGame');
