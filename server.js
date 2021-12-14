@@ -8,16 +8,20 @@ var currentRoom = 1;
 
 io.on('connection', (socket) => {
     players++;
+    console.log('Players in current room: ' + players);
 
     console.log('a user connected');
 
     socket.join('room' + currentRoom);
     let room = 'room' + currentRoom;
 
-    if (players === 2) {
+    if (players === 1) {
+        // console.log("Change Player in " + room);
+        // socket.to(room).emit('changePlayer');
+    } else if (players === 2) {
+        socket.to(room).emit('changePlayer');
         players = 0;
         currentRoom++;
-        socket.to(room).emit('changePlayer');
         console.log("New Room: " + 'room' + currentRoom);
     }
 
@@ -25,7 +29,7 @@ io.on('connection', (socket) => {
         socket.to(room).emit('position-broadcast', position);
     });
     socket.on('changePlayer', () => {
-        io.in(room).emit('changePlayer');
+        socket.to(room).emit('changePlayer');
         console.log("changePlayer");
     });
     socket.on('newGame', () => {
