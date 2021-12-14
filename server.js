@@ -40,7 +40,7 @@ io.on('connection', (socket) => {
         io.in(room).emit('newGame');
     });
     socket.on('disconnect', () => {
-        players--;
+        // players--;
         console.log('user disconnected');
     });
 });
