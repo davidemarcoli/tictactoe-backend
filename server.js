@@ -1,7 +1,12 @@
 var app = require('express')();
 var http = require('http').createServer(app);
 
-var io = require('socket.io')(http);
+const io = require("socket.io")(http, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST", "PUT", "DELETE"],
+    }
+});
 
 var players = 0;
 var currentRoom = 1;
