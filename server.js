@@ -8,8 +8,6 @@ const io = require("socket.io")(http, {
     }
 });
 
-// var currentRoom = 1;
-
 io.on('connection', (socket) => {
 
     var room = '';
@@ -25,20 +23,32 @@ io.on('connection', (socket) => {
             io.to(socket.id).emit('roomFull');
             return;
         } else {
+
             room = infos[1];
             socket.join(room);
             console.log('Player joined room: ' + room);
             io.in(room).emit('resetPlayer');
-            io.to(socket.id).emit('roomJoined', room);
+
+            let players = [];
+
+            if (clients) {
+                clients.forEach((clientId) => {
+                    const clientSocket = io.sockets.sockets.get(clientId);
+                    console.log(clientSocket);
+                    players.push({
+                        nickname: clientSocket.nickname,
+                        ip: clientSocket.handshake.address,
+                        ip2: clientSocket.handshake.headers.origin,
+                    });
+                });
+            }
+
+            io.to(socket.id).emit('roomJoined', players);
+            io.in(room).emit('player-update', players);
         }
 
-        if (players === 0) {
-            // console.log("Change Player in " + room);
-            // socket.to(room).emit('changePlayer');
-        } else if (players === 1) {
+        if (players === 1) {
             socket.to(room).emit('changePlayer');
-            // currentRoom++;
-            // console.log("New Room: " + 'room' + currentRoom);
         }
 
         socket.on('position', (position) => {
