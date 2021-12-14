@@ -30,7 +30,6 @@ io.on('connection', (socket) => {
     });
     socket.on('changePlayer', () => {
         socket.to(room).emit('changePlayer');
-        console.log("changePlayer");
     });
     socket.on('newGame', () => {
         io.in(room).emit('newGame');
