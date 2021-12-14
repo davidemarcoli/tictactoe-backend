@@ -14,21 +14,25 @@ io.on('connection', (socket) => {
 
     if (players > 1) {
         console.log(players + " Players!");
-        socket.broadcast.to(socket).emit('changePlayer');
+        // io.to(socket).emit('changePlayer');
+        // setTimeout(() => {  io.to(socket).emit('changePlayer'); }, 1000);
+        socket.broadcast.emit('changePlayer');
     }
 
-    socket.on('message', (msg) => {
-        console.log(msg);
-        socket.broadcast.emit('message-broadcast', msg);
-    });
+    // socket.on('message', (msg) => {
+    //     console.log(msg);
+    //     socket.broadcast.emit('message-broadcast', msg);
+    // });
     socket.on('position', (position) => {
         socket.broadcast.emit('position-broadcast', position);
     });
     socket.on('changePlayer', () => {
-        socket.broadcast.to(socket).emit('changePlayer');
+        // socket.broadcast.to("room1").emit('changePlayer');
+        io.in("room1").emit('changePlayer');
+        console.log("changePlayer");
     });
     socket.on('newGame', () => {
-        socket.broadcast.to("room1").emit('newGame');
+        io.in("room1").emit('newGame');
     });
     socket.on('disconnect', () => {
         players--;
