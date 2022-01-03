@@ -1,12 +1,30 @@
 var app = require('express')();
 var http = require('http').createServer(app);
 
-const io = require("socket.io")(http, {
-    cors: {
-        origin: "*",
-        methods: ["GET", "POST", "PUT", "DELETE"],
-    }
-});
+// const io = require("socket.io")(http, {
+//     cors: {
+//         origin: "*",
+//         methods: ["GET", "POST", "PUT", "DELETE"],
+//     }
+// });
+
+var isWindows = process.platform === "win32";
+
+const fs = require("fs");
+
+let httpServer;
+
+if (isWindows) {
+    httpServer = require("https").createServer();
+} else {
+    httpServer = require("https").createServer({
+        key: fs.readFileSync("/certs/ssl/davidemarcoli.de/private.key"),
+        cert: fs.readFileSync("/certs/ssl/davidemarcoli.de/certificate.crt"),
+    });
+}
+const options = { /* ... */ };
+const io = require("socket.io")(httpServer, options);
+
 
 io.on('connection', (socket) => {
 
