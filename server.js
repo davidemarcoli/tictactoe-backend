@@ -1,10 +1,10 @@
 const fs = require('fs');
 
 var app = require('express')();
-var http = require('http').createServer(app, { 
-                key: fs.readFileSync('/certs/ssl/davidemarcoli.de/private.key'),
-                cert: fs.readFileSync('/certs/ssl/davidemarcoli.de/certificate.crt') 
-             });
+//var http = require('http').createServer(app, { 
+//                key: fs.readFileSync('/certs/ssl/davidemarcoli.de/private.key'),
+//                cert: fs.readFileSync('/certs/ssl/davidemarcoli.de/certificate.crt') 
+//             });
 
 // const io = require("socket.io")(http, {
 //     cors: {
@@ -15,7 +15,6 @@ var http = require('http').createServer(app, {
 
 var isWindows = process.platform === "win32";
 
-const fs = require("fs");
 
 let httpServer;
 
@@ -24,7 +23,7 @@ if (isWindows) {
 } else {
     httpServer = require("https").createServer({
         key: fs.readFileSync("/certs/ssl/davidemarcoli.de/private.key"),
-        cert: fs.readFileSync("/certs/ssl/davidemarcoli.de/certificate.crt"),
+        cert: fs.readFileSync("/certs/ssl/davidemarcoli.de/Lets_Encrypt_davidemarcoli.de.pem"),
     });
 }
 const options = { /* ... */ };
@@ -92,6 +91,6 @@ io.on('connection', (socket) => {
 });
 
 app.get('/', (req, res) => res.send('hello!'));
-http.listen(process.env.PORT || 3000, () => {
+httpServer.listen(process.env.PORT || 3000, () => {
     console.log('listening on *:3000');
 });
