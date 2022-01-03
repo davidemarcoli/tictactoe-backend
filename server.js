@@ -91,6 +91,6 @@ io.on('connection', (socket) => {
 });
 
 app.get('/', (req, res) => res.send('hello!'));
-httpServer.listen(process.env.PORT || 3000, () => {
-    console.log('listening on *:3000');
+http.listen(process.env.PORT || 3000, () => {
+    console.log('listening on *:' + (process.env.PORT || 3000));
 });
