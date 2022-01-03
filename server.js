@@ -1,5 +1,10 @@
+const fs = require('fs');
+
 var app = require('express')();
-var http = require('http').createServer(app);
+var http = require('http').createServer(app, { 
+                key: fs.readFileSync('/certs/ssl/davidemarcoli.de/private.key'),
+                cert: fs.readFileSync('/certs/ssl/davidemarcoli.de/certificate.crt') 
+             });
 
 const io = require("socket.io")(http, {
     cors: {
