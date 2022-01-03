@@ -24,13 +24,15 @@ if (isWindows) {
     httpServer = require("https").createServer({
         key: fs.readFileSync("/certs/ssl/davidemarcoli.de/private.key"),
         cert: fs.readFileSync("/certs/ssl/davidemarcoli.de/Lets_Encrypt_davidemarcoli.de.pem"),
-        cors: {
-            origin: "*",
-            methods: ["GET", "POST", "PUT", "DELETE"],
-        }
+
     });
 }
-const options = { /* ... */ };
+const options = {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST", "PUT", "DELETE"],
+    }
+};
 const io = require("socket.io")(httpServer, options);
 
 
